@@ -32,11 +32,22 @@ a = math.sqrt(2) * gc_rc
 
 # Squared z velocity dispersion (from core radius) - will need cluster mass maybe 
 
-
+# Velocity Dispersions for Globular Clusters
 for index, cluster in GCs.iterrows():
-	rc = cluster['rh[pc]'] * (3.086 * (10**13))
+	rc = cluster['rh[pc]'] * (3.086 * (10**13))#core radius (parsecs)
+
 	a = math.sqrt(2) * rc
 	mass = cluster['Mcl[Msun]']
 	dist = cluster['Rsun[kpc]']
-	sigma_z = ((3/64)*(math.pi)*(6.6741 * (10**(-20) * (mass * 2 * (10 **30)))/rc))/math.sqrt(1 + ((dist/a)**2))
-	print(sigma_z)
+
+	if mass != -9.99:
+		sigma_z = math.sqrt(((3/64)*(math.pi)*(6.6741 * (10**(-20) * (mass * 2 * (10 **30)))/rc)))
+		# print(sigma_z, "km/s")
+
+print(OCs.columns)
+"""Make histograms of age, metallicity, size, mass comparing all clusters with ones that we 
+can get a velocity dispersion for"""
+
+
+
+# Diam column in arcmin (i think),

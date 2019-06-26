@@ -123,7 +123,7 @@ def cosmic_sampler(age, Nbin, Z, sigma):
 	Will later loop through globular and open clusters and apply this for loop"""
 	n_grid = Nbin
 
-	# Initial (input) binares -- using sampler method from cosmic
+	# Initial (input) binares -- using sampler method from cosmic #1234 - random seed
 	InitialBinaries, sampled_mass, n_sampled = InitialBinaryTable.sampler('multidim',\
 	 [11], [11], 2, 1, 'delta_burst', age, Z, Nbin)
 
@@ -193,27 +193,41 @@ for index, row in OCs.iterrows():
 		if row['Fe/H'] != -99.99:
 			print(index)
 			OC_run = cosmic_sampler(oc_age, int(row['Nbin']), row['Fe/H'], 1)
-			print('Webda')
+			print('Webda:', index)
 			print(OC_run)
+		else:
+			print('didn\'t run webda:', index)
 
 	# Goes through Solaris age-metallicity combos to perform cosmic_sampler on each Solaris cluster
 	elif np.isfinite(row['t']):
-		print(index)
+		print('Solaris:', index)
 		OC_run = cosmic_sampler(row['t'], int(row['Nbin']), row['[FeH]'], 1)
-		print('Solaris')
+
 		print(OC_run)
 
+
 	# Goes through Piskunov age-metallicity combos ... "          "
-	elif np.isfinite(row['log(t[yr])K']):
-		print(index)
+	elif np.isfinite(row['log(t[yr])K']) and np.isfinite(row['[Fe/H]K']):
 		OC_run = cosmic_sampler(row['log(t[yr])K'], int(row['Nbin']), row['[Fe/H]K'], 1)
-		print('Piskunov')
+		print('Piskunov:', index)
 		print(OC_run)
-	# else:
-	# 	pass
+
+
+	else:
+		print('couldn\'t run', index)
 
 
 print('Done with Open Clusters')
+
+"""# period cutoff - 1000 days (only allow faster binaries)
+
+clone Aaron's EBLSST repo - look through EBLSST.py script (check Breivik section)
+
+will need to add mass and radius as params to function (radius and distance to cluster)
+
+
+from aaron: mass, radius, distance, metallicity, age - defines clusters that share all these values that"""
+
 
 # Globular Cluster for loop - applying cosmic_sampler to each cluster (if there is no velocity dispersion given we just assume 1km/s, can change this value later)
 for index, row in GCs.iterrows():
