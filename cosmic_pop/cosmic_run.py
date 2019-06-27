@@ -117,7 +117,7 @@ OCs['Nbin'] = nbins
 # sigma - velocity dispersion of a cluster 
 
 # Function with same purpose as above - with sampler class from InitialBinaries - different sampling
-def cosmic_sampler(age, Nbin, Z, sigma):
+def cosmic_sampler(age, Nbin, Z, sigma, random_seed):
 	"""Creates and evolves a set of binaries with given 
 	age (to evolve to), number of binaries, metallicity, and velocity dispersion. 
 	Will later loop through globular and open clusters and apply this for loop"""
@@ -125,7 +125,7 @@ def cosmic_sampler(age, Nbin, Z, sigma):
 
 	# Initial (input) binares -- using sampler method from cosmic #1234 - random seed
 	InitialBinaries, sampled_mass, n_sampled = InitialBinaryTable.sampler('multidim',\
-	 [11], [11], 2, 1, 'delta_burst', age, Z, Nbin)
+	 [11], [11], random_seed, 1, 'delta_burst', age, Z, Nbin)
 
 	# Inclination and omega values
 	inc = np.arccos(2.*np.random.uniform(0,1,Nbin) - 1.)
@@ -163,6 +163,13 @@ def cosmic_sampler(age, Nbin, Z, sigma):
 
 	return bcm
 
+# Reading in GC/OC sigma values from get_sigmas
+GC_sigma = pd.read_csv('/Users/andrewbowen/ceb_project/cosmic_pop/gc-sigma.txt', names = ['index','sigma_v'])
+OC_sigma = pd.read_csv('/Users/andrewbowen/ceb_project/cosmic_pop/oc-sigma.txt', names = ['index','sigma_v'])
+
+# Pulling only sigma values (no indices)
+gc_sigma = GC_sigma['sigma_v']
+oc_sigma = OC_sigma['sigma_v']
 
 # Define from cluster params: xGX, yGX, zGX , dist_kpc
 
@@ -192,8 +199,7 @@ for index, row in OCs.iterrows():
 
 		# Checking for WEBDA metallicity (if it isn't a bad value we'll use the given metallicity)
 		if row['Fe/H'] != -99.99:
-			print(index)
-			OC_run = cosmic_sampler(oc_age, int(row['Nbin']), row['Fe/H'], 1)
+			OC_run = cosmic_sampler(oc_age, int(row['Nbin']), row['Fe/H'], 1, np.random.randint(1, 100))
 			print('Webda:', index)
 			print(OC_run)
 		else:
@@ -202,20 +208,20 @@ for index, row in OCs.iterrows():
 	# Goes through Solaris age-metallicity combos to perform cosmic_sampler on each Solaris cluster
 	elif np.isfinite(row['t']):
 		print('Solaris:', index)
-		OC_run = cosmic_sampler(row['t'], int(row['Nbin']), row['[FeH]'], 1)
+		OC_run = cosmic_sampler(row['t'], int(row['Nbin']), row['[FeH]'], 1, np.random.randint(1, 100))
 
 		print(OC_run)
 
 
 	# Goes through Piskunov age-metallicity combos ... "          "
 	elif np.isfinite(row['log(t[yr])K']) and np.isfinite(row['[Fe/H]K']):
-		OC_run = cosmic_sampler(row['log(t[yr])K'], int(row['Nbin']), row['[Fe/H]K'], 1)
+		OC_run = cosmic_sampler(row['log(t[yr])K'], int(row['Nbin']), row['[Fe/H]K'], 1, np.random.randint(1, 100))
 		print('Piskunov:', index)
 		print(OC_run)
 
 
 	else:
-		print('couldn\'t run cluster #:', index)
+		print('couldn\'t run cluster #', index)
 
 
 print('Done with Open Clusters')
@@ -241,7 +247,7 @@ for index, row in GCs.iterrows():
 	# Verifying there is a velodicty dispersion parameter - if not we'll give the function one to use (1 in this case)
 	if np.isfinite(row['sig_v']):
 		print(row['ID_x'])
-		GC_run = cosmic_sampler(gc_age, int(Nbin), Z, int(sigma_v))
+		GC_run = cosmic_sampler(gc_age, int(Nbin), Z, int(sigma_v), np.random.randint(1, 100))
 	# else:
 	# 	GC_run = cosmic_sampler(gc_age, int(Nbin), Z, 1)
 	print(GC_run)
