@@ -184,12 +184,13 @@ for index, row in OCs.iterrows():
 	Each OC data source (Webda, Pisk, Solaris) has age and metallicity data, so we're using that
 	for the input parameters of our function"""
 
-	# Goes through webda age - metallicity combos to perfomr cosmic_sampler on each cluster
+	# Goes through webda age - metallicity combos to perform cosmic_sampler on each cluster
 	if np.isfinite(row['Age']):
 
-		oc_age = row['Age'] * (10**9)
+		oc_age = row['Age'] * (10**9)#converting age from Gyr
 		oc_age = int(oc_age)
 
+		# Checking for WEBDA metallicity (if it isn't a bad value we'll use the given metallicity)
 		if row['Fe/H'] != -99.99:
 			print(index)
 			OC_run = cosmic_sampler(oc_age, int(row['Nbin']), row['Fe/H'], 1)
@@ -214,7 +215,7 @@ for index, row in OCs.iterrows():
 
 
 	else:
-		print('couldn\'t run', index)
+		print('couldn\'t run cluster #:', index)
 
 
 print('Done with Open Clusters')
