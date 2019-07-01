@@ -194,7 +194,7 @@ for index, row in GCs.iterrows():
 	gc_age = int(gc_age)
 
 	# Verifying there is a velodicty dispersion parameter - if not we'll give the function one to use (1 in this case)
-	if np.isfinite(row['sigma_v']) and np.isfinite(gc_age):
+	if np.isfinite(row['sigma_v']) and np.isfinite(gc_age):#checking for age and velocity despersion, if they are NaNs we'll pass chosen values for the cluster
 		print('running with table value:', row['ID_x'])
 		GC_run = cosmic_sampler(gc_age, int(Nbin), Z, int(sigma_v), np.random.randint(1, 100))
 	else:
@@ -317,6 +317,7 @@ axarr[1,0].set_title('Evolved Binary Population mass 2')
 axarr[1,1].hist(EvolvedBinaries['ecc'], bins = 50, range = (0,1), color = 'orange')
 axarr[1,1].set_xlabel('Eccentricity', fontsize = 12)
 axarr[1,1].set_title('Evolved Binary Population Eccentricity')
+f.savefig('all-stats-evolved')
 
 # Radii Histograms - evolved
 f, ax = plt.subplots(figsize = (6,5))
