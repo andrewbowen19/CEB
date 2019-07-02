@@ -31,7 +31,6 @@ InitialBinaries, sampled_mass, n_sampled = InitialBinaryTable.sampler('multidim'
 
 # Initial Binary Period Histogram
 f,ax = plt.subplots(figsize = (8,5))
-
 ax.hist(np.log10(p_i), bins = 50, color = '#CF0A2C')
 ax.set_xlabel('Input Periods (log-days)')
 ax.grid(None)
@@ -60,7 +59,7 @@ EvolvedBinaries = bcm
 m1_f = bcm['mass_1']
 m2_f = bcm['mass_2']
 
-
+# Reading in velo dispersion data files from get_sigma.ipynb
 import pandas as pd
 GC_sigma = pd.read_csv('/projects/p30137/abowen/CEB/cosmic/gc-sigma.txt', names = ['index','sigma_v'])
 OC_sigma = pd.read_csv('/projects/p30137/abowen/CEB/cosmic/oc-sigma.txt', names = ['index','sigma_v'])
