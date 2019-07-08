@@ -38,13 +38,13 @@ class getClusterBinaries:
 	# """Function to calculate the hard-soft period cutoff given by Eq 1 in Geller, Leigh 2015
     	# Masses are in solar masses (converted later to kg), m1 and m2 are binary component masses,
     	# and m3 is the mass of the incoming (disrupting) object, velocity dispersions are given in km/s"""
-		G = 1.334 * (10 **11) # Gravitational Constant in units of km^3 M_sun ^ -1 s ^ -2 (consistent with cosmic output units)
+		G = 1.334 * (10 ** 11) # Gravitational Constant in units of km^3 M_sun ^ -1 s ^ -2 (consistent with cosmic output units)
 
 		const = (np.pi*G/np.sqrt(2))
 		m1 = row['mass1_binary']
 		m2 = row['mass2_binary']
-		# m3 = row['m3']
-		# sigma = row['sigma']
+		m3 = row['m3']
+		sigma = row['sigma']
 
 		Phs = const*(np.sqrt(m1*m2/0.5)**3)*((np.sqrt(3)*0.8)**(-3))/(np.sqrt(m1+m2))
 		return Phs
@@ -85,9 +85,12 @@ class getClusterBinaries:
 
 		 # Throwing out soft binaries
 		InitialBinaries = InitialBinaries.loc[np.where(p_i < HS_Cutoff)]#Throwing out soft binaries
-		print(InitialBinaries['porb'])
+
 		return(InitialBinaries)
 
+	# Evolving hard binaries
+	def EvolveBinaries(cls):
+		bpp, bcm, initC  = Evolve.evolve(initialbinarytable = cls.InitialBinaries, BSEDict = BSEDict)
 
 
 
